@@ -31,7 +31,7 @@ gc = gspread.authorize(credentials)
 sh = gc.open(file_name)
 wks = sh.worksheet(sheet_name1)
 
-API_KEY = "AIzaSyBD-tTTpUucOa7chmAErG1OWVvMRnL9BdU"
+API_KEY = ""
 #CHANNEL_ID = 'UCFKOVgVbGmX65RxO3EtH3iw'
 #0期生
 sora = 'UCp6993wxpyDPHUpavwDFqgg'
