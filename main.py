@@ -94,7 +94,7 @@ for CHANNEL_ID in CHANNEL_ID_LIST:
     time.sleep(3)
     url = 'https://www.youtube.com/channel/{}/videos'.format(CHANNEL_ID)
     r = session.get(url)
-    print("strat")
+    print(url)
     #soup = bs(r.html.html, "html.parser")
     id_list = []
     if r.status_code != 200:
@@ -110,6 +110,7 @@ for CHANNEL_ID in CHANNEL_ID_LIST:
                 title = iframe_titel.attrs["title"]
                 video_url = "https://www.youtube.com" + iframe_titel.attrs["href"]
                 if "時間前" in data:
+                    print(title)
                     target = '作成者:'
                     idx = data.find(target)
                     ch_name_data = data[idx+5:]
