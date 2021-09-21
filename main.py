@@ -91,9 +91,10 @@ infos = []
 
 list_ = []
 for CHANNEL_ID in CHANNEL_ID_LIST:
-    #time.sleep(3)
+    time.sleep(3)
     url = 'https://www.youtube.com/channel/{}/videos'.format(CHANNEL_ID)
     r = session.get(url)
+    print("strat")
     #soup = bs(r.html.html, "html.parser")
     id_list = []
     if r.status_code != 200:
