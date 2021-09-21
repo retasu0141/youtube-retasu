@@ -4,12 +4,13 @@ import requests
 
 import pandas as pd
 import datetime
-from apiclient.discovery import build
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import csv
 import numpy as np
+import lxml
+from requests_html import HTMLSession
 
 dt_now = datetime.datetime.now()
 
@@ -31,8 +32,7 @@ gc = gspread.authorize(credentials)
 sh = gc.open(file_name)
 wks = sh.worksheet(sheet_name1)
 
-API_KEY = os.environ.get("API_KEY")
-
+#CHANNEL_ID = 'UCFKOVgVbGmX65RxO3EtH3iw'
 #0期生
 sora = 'UCp6993wxpyDPHUpavwDFqgg'
 azuki = 'UC0TXe_LYZ4scaW2XMyi5_kw'
@@ -78,52 +78,68 @@ nene = 'UCAWSyEs_Io8MtpY3m-zqILA'
 botan = 'UCUKD-uaobj9jiqB-VXt71mA'
 polka = 'UCK9V2B22uJYu3N7eR_BT9QA'
 
-
+session = requests.Session()
+#Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36
+headers = {'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36 '} #ユーザーエージェント情報
+session = HTMLSession()
 
 
 
 CHANNEL_ID_LIST = [sora,azuki,roboco,miko,suisei, mel,aki,haato,hubuki,matsuri ,akua,shion,ayame,tyoko,subaru ,mio,okayu,korone ,peko,rushia,hurea,noeru,marin ,kanata,watame,towa,luna ,lamy,nene,botan,polka]
-youtube = build('youtube', 'v3', developerKey=API_KEY)
-base_url = 'https://www.googleapis.com/youtube/v3'
-url = base_url + '/search?key=%s&channelId=%s&part=snippet,id&order=date&maxResults=50'
+
 infos = []
 
 list_ = []
 for CHANNEL_ID in CHANNEL_ID_LIST:
-    sleep(10)
-    response = requests.get(url % (API_KEY, CHANNEL_ID))
+    #time.sleep(3)
+    url = 'https://www.youtube.com/channel/{}/videos'.format(CHANNEL_ID)
+    r = session.get(url)
+    #soup = bs(r.html.html, "html.parser")
     id_list = []
-    if response.status_code != 200:
+    if r.status_code != 200:
         print('エラーで終わり')
         #break
     else:
-        result = response.json()
-        for item in result['items']:
-            sleep(5)
-             if item['id']['kind'] == 'youtube#video':
-                 s = item['snippet']['publishedAt']
-                 target = 'T'
-                 idx = s.find(target)
-                 day = s[:idx]
-                 idx = s.find(target)
-                 time = s[idx+1:]
-                 time = time.replace('Z', '')
-                 date_str = day+" "+time
-                 tdatetime = datetime.datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
-                 td = dt_now - tdatetime
-                 if td.total_seconds() <= 86400:
-                     response = youtube.videos().list(part = 'snippet,statistics',id = item['id']['videoId']).execute()
-                     item = response.get("items", [])[0]
-                     if item['snippet']['liveBroadcastContent'] == "none":
-                         viewCount = item['statistics']['viewCount']
-                         title = item['snippet']['title']
-                         channelTitle = item['snippet']['channelTitle']
-                         id = item['id']
-                         id_list.append([channelTitle,title,str(viewCount),"https://youtu.be/"+id])
+        r.html.render(sleep=1)
+        iframe_rows_titel = r.html.find("#video-title")
+        #iframe_rows_metadata = r.html.find("#metadata-line")
+        for iframe_titel in iframe_rows_titel:
+            data = iframe_titel.attrs["aria-label"]
+            if "配信済み" in data:
+                title = iframe_titel.attrs["title"]
+                video_url = "https://www.youtube.com" + iframe_titel.attrs["href"]
+                if "時間前" in data:
+                    target = '作成者:'
+                    idx = data.find(target)
+                    ch_name_data = data[idx+5:]
+                    target = '時間前'
+                    idx = ch_name_data.find(target)
+                    ch_name = ch_name_data[:idx-2]
+
+                    target = ch_name
+                    idx = data.find(target)
+                    time_data = data[idx+len(ch_name):]
+                    target ="に配信済み"
+                    idx = time_data.find(target)
+                    time_ = time_data[:idx]
+
+                    idx = data.find(target)
+                    v_time_data = data[idx+len(target):]
+                    target ="分"
+                    idx = v_time_data.find(target)
+                    v_time = v_time_data[:idx+1]
+
+                    target = v_time
+                    idx = data.find(target)
+                    viewCount = data[idx+len(v_time):]
+
+                    id_list.append([ch_name,title,time_,v_time,viewCount,video_url])
+            else:
+                pass
                          #print(channelTitle+title+str(viewCount))
     list_.extend(id_list)
 
-videos = pd.DataFrame(list_, columns=['channelTitle', 'title', 'viewCount', 'url'])
+videos = pd.DataFrame(list_, columns=['チャンネル名', '動画タイトル', '経過時間', '動画時間', '視聴回数', 'URL'])
 videos.to_csv('videos.csv', index=None)
 
 sh.values_clear(f"{sheet_name1}!A1:F300")
