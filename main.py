@@ -90,6 +90,7 @@ infos = []
 
 list_ = []
 for CHANNEL_ID in CHANNEL_ID_LIST:
+    sleep(10)
     response = requests.get(url % (API_KEY, CHANNEL_ID))
     id_list = []
     if response.status_code != 200:
@@ -98,6 +99,7 @@ for CHANNEL_ID in CHANNEL_ID_LIST:
     else:
         result = response.json()
         for item in result['items']:
+            sleep(5)
              if item['id']['kind'] == 'youtube#video':
                  s = item['snippet']['publishedAt']
                  target = 'T'
