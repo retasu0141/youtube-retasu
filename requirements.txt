@@ -5,4 +5,4 @@ oauth2client
 requests-html
 lxml
 pyppeteer
-websockets==6.0 --force-reinstall
+websockets==6.0
