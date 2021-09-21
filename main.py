@@ -139,7 +139,8 @@ for CHANNEL_ID in CHANNEL_ID_LIST:
                 pass
                          #print(channelTitle+title+str(viewCount))
     list_.extend(id_list)
-
+print("EXIT")
+print(list_)
 videos = pd.DataFrame(list_, columns=['チャンネル名', '動画タイトル', '経過時間', '動画時間', '視聴回数', 'URL'])
 videos.to_csv('videos.csv', index=None)
 
