@@ -100,7 +100,7 @@ for CHANNEL_ID in CHANNEL_ID_LIST:
         print('エラーで終わり')
         #break
     else:
-        r.html.render(sleep=1)
+        r.html.render(timeout=20)
         iframe_rows_titel = r.html.find("#video-title")
         #iframe_rows_metadata = r.html.find("#metadata-line")
         for iframe_titel in iframe_rows_titel:
