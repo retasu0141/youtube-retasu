@@ -137,6 +137,14 @@ for CHANNEL_ID in CHANNEL_ID_LIST:
                     target = v_time
                     idx = data.find(target)
                     viewCount = data[idx+len(v_time):]
+                    if len(viewCount) >= 20:
+                        target ="minute"
+                        idx = v_time_data.find(target)
+                        v_time = v_time_data[:idx+len(target)]
+                        print(v_time)
+                        target = v_time
+                        idx = data.find(target)
+                        viewCount = data[idx+len(v_time):]
                     print(viewCount)
                     id_list.append([ch_name,title,time_,v_time,viewCount,video_url])
             else:
@@ -144,7 +152,7 @@ for CHANNEL_ID in CHANNEL_ID_LIST:
                          #print(channelTitle+title+str(viewCount))
     list_.extend(id_list)
 print("EXIT")
-print(list_)
+#print(list_)
 videos = pd.DataFrame(list_, columns=['チャンネル名', '動画タイトル', '経過時間', '動画時間', '視聴回数', 'URL'])
 videos.to_csv('videos.csv', index=None)
 
