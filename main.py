@@ -94,7 +94,7 @@ for CHANNEL_ID in CHANNEL_ID_LIST:
     time.sleep(3)
     url = 'https://www.youtube.com/channel/{}/videos'.format(CHANNEL_ID)
     r = session.get(url)
-    print(url)
+    #print(url)
     #soup = bs(r.html.html, "html.parser")
     id_list = []
     if r.status_code != 200:
@@ -104,15 +104,16 @@ for CHANNEL_ID in CHANNEL_ID_LIST:
         r.html.render(timeout=20)
 
         iframe_rows_titel = r.html.find("#video-title")
-        print(iframe_rows_titel)
+        #print(iframe_rows_titel)
         #iframe_rows_metadata = r.html.find("#metadata-line")
         for iframe_titel in iframe_rows_titel:
             data = iframe_titel.attrs["aria-label"]
+            print(data)
             if "配信済み" in data:
                 title = iframe_titel.attrs["title"]
                 video_url = "https://www.youtube.com" + iframe_titel.attrs["href"]
                 if "時間前" in data:
-                    print(title)
+                    #print(title)
                     target = '作成者:'
                     idx = data.find(target)
                     ch_name_data = data[idx+5:]
