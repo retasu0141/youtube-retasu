@@ -117,11 +117,11 @@ for CHANNEL_ID in CHANNEL_ID_LIST:
                     target = 'by '
                     idx = data.find(target)
                     ch_name_data = data[idx+len(target):]
-                    target = 'hours ago'
-                    idx = ch_name_data.find(target)
-                    ch_name = ch_name_data[:idx-3]
-                    print(ch_name)
                     target = "Streamed"
+                    idx = ch_name_data.find(target)
+                    ch_name = ch_name_data[:idx]
+                    print(ch_name)
+
                     idx = data.find(target)
                     time_data = data[idx+len(target):]
                     target ="ago"
@@ -150,3 +150,5 @@ videos.to_csv('videos.csv', index=None)
 
 sh.values_clear(f"{sheet_name1}!A1:F300")
 wks.update(list(csv.reader(open(csv_file_name, encoding='UTF-8'))))
+
+
