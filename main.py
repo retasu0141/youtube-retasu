@@ -81,7 +81,7 @@ polka = 'UCK9V2B22uJYu3N7eR_BT9QA'
 session = requests.Session()
 #Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36
 headers = {'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36 '} #ユーザーエージェント情報
-session = HTMLSession(browser_args=['--no-sandbox', '--proxy-server=175.130.219.8:9999'])
+session = HTMLSession()
 
 
 
@@ -93,7 +93,7 @@ list_ = []
 for CHANNEL_ID in CHANNEL_ID_LIST:
     time.sleep(3)
     url = 'https://www.youtube.com/channel/{}/videos'.format(CHANNEL_ID)
-    r = session.get(url, proxies= {"http": "http://175.130.219.8:9999","https": "https://175.130.219.8:9999"},headers=headers)
+    r = session.get(url,headers=headers)
     #print(url)
     #soup = bs(r.html.html, "html.parser")
     id_list = []
@@ -101,38 +101,38 @@ for CHANNEL_ID in CHANNEL_ID_LIST:
         print('エラーで終わり')
         #break
     else:
-        r.html.render(timeout=20)
+        r.html.render(timeout=30)
 
         iframe_rows_titel = r.html.find("#video-title")
         #print(iframe_rows_titel)
         #iframe_rows_metadata = r.html.find("#metadata-line")
         for iframe_titel in iframe_rows_titel:
             data = iframe_titel.attrs["aria-label"]
-            print(data)
-            if "配信済み" in data:
+            #print(data)
+            if "Streamed" in data:
                 title = iframe_titel.attrs["title"]
                 video_url = "https://www.youtube.com" + iframe_titel.attrs["href"]
-                if "時間前" in data:
+                if "hours ago" in data:
                     #print(title)
-                    target = '作成者:'
+                    target = 'by '
                     idx = data.find(target)
-                    ch_name_data = data[idx+5:]
-                    target = '時間前'
+                    ch_name_data = data[idx+len(target):]
+                    target = 'hours ago'
                     idx = ch_name_data.find(target)
-                    ch_name = ch_name_data[:idx-2]
+                    ch_name = ch_name_data[:idx-3]
 
-                    target = ch_name
+                    target = "Streamed"
                     idx = data.find(target)
-                    time_data = data[idx+len(ch_name):]
-                    target ="に配信済み"
+                    time_data = data[idx+len(target):]
+                    target ="ago"
                     idx = time_data.find(target)
                     time_ = time_data[:idx]
 
                     idx = data.find(target)
                     v_time_data = data[idx+len(target):]
-                    target ="分"
+                    target ="minutes"
                     idx = v_time_data.find(target)
-                    v_time = v_time_data[:idx+1]
+                    v_time = v_time_data[:idx+len(target)]
 
                     target = v_time
                     idx = data.find(target)
