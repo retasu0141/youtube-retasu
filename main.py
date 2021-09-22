@@ -108,11 +108,11 @@ for CHANNEL_ID in CHANNEL_ID_LIST:
         #iframe_rows_metadata = r.html.find("#metadata-line")
         for iframe_titel in iframe_rows_titel:
             data = iframe_titel.attrs["aria-label"]
-            #print(data)
             if "Streamed" in data:
                 title = iframe_titel.attrs["title"]
                 video_url = "https://www.youtube.com" + iframe_titel.attrs["href"]
                 if "hours ago" in data:
+                    print(data)
                     #print(title)
                     target = 'by '
                     idx = data.find(target)
@@ -120,24 +120,24 @@ for CHANNEL_ID in CHANNEL_ID_LIST:
                     target = 'hours ago'
                     idx = ch_name_data.find(target)
                     ch_name = ch_name_data[:idx-3]
-
+                    print(ch_name)
                     target = "Streamed"
                     idx = data.find(target)
                     time_data = data[idx+len(target):]
                     target ="ago"
                     idx = time_data.find(target)
                     time_ = time_data[:idx]
-
+                    print(time_)
                     idx = data.find(target)
                     v_time_data = data[idx+len(target):]
                     target ="minutes"
                     idx = v_time_data.find(target)
                     v_time = v_time_data[:idx+len(target)]
-
+                    print(v_time)
                     target = v_time
                     idx = data.find(target)
-                    viewCount = data[idx+len(v_time):]
-
+                    viewCount = data[idx+len(v_time):]¥
+                    print(viewCount)
                     id_list.append([ch_name,title,time_,v_time,viewCount,video_url])
             else:
                 pass
