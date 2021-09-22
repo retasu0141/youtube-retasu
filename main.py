@@ -136,7 +136,7 @@ for CHANNEL_ID in CHANNEL_ID_LIST:
                     print(v_time)
                     target = v_time
                     idx = data.find(target)
-                    viewCount = data[idx+len(v_time):]¥
+                    viewCount = data[idx+len(v_time):]
                     print(viewCount)
                     id_list.append([ch_name,title,time_,v_time,viewCount,video_url])
             else:
