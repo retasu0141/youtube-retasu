@@ -110,7 +110,12 @@ for CHANNEL_ID in CHANNEL_ID_LIST:
             data = iframe_titel.attrs["aria-label"]
             if "Streamed" in data:
                 title = iframe_titel.attrs["title"]
-                video_url = "https://www.youtube.com" + iframe_titel.attrs["href"]
+                url_data = iframe_titel.attrs["href"]
+                target = '?v='
+                idx = url_data.find(target)
+                video_id = url_data[idx+len(target):]
+                #print(video_id)
+                video_url = "https://youtu.be/" + video_id
                 if "hours ago" in data:
                     print(data)
                     #print(title)
@@ -159,4 +164,4 @@ videos.to_csv('videos.csv', index=None)
 sh.values_clear(f"{sheet_name1}!A1:F300")
 wks.update(list(csv.reader(open(csv_file_name, encoding='UTF-8'))))
 
-
+#heroku run python main.py -a youtube-retasu
