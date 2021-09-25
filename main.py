@@ -285,71 +285,74 @@ infos = []
 
 list_ = []
 for CHANNEL_ID in CHANNEL_ID_LIST2:
-    time.sleep(3)
-    url = 'https://www.youtube.com/channel/{}/videos'.format(CHANNEL_ID)
-    r = session.get(url,headers=headers)
-    #print(url)
-    #soup = bs(r.html.html, "html.parser")
-    id_list = []
-    if r.status_code != 200:
-        print('エラーで終わり')
-        #break
-    else:
-        r.html.render(timeout=30)
+    try:
+        time.sleep(3)
+        url = 'https://www.youtube.com/channel/{}/videos'.format(CHANNEL_ID)
+        r = session.get(url,headers=headers)
+        #print(url)
+        #soup = bs(r.html.html, "html.parser")
+        id_list = []
+        if r.status_code != 200:
+            print('エラーで終わり')
+            #break
+        else:
+            r.html.render(timeout=30)
 
-        iframe_rows_titel = r.html.find("#video-title")
-        #print(iframe_rows_titel)
-        #iframe_rows_metadata = r.html.find("#metadata-line")
-        for iframe_titel in iframe_rows_titel:
-            data = iframe_titel.attrs["aria-label"]
-            if "Streamed" in data:
-                title = iframe_titel.attrs["title"]
-                url_data = iframe_titel.attrs["href"]
-                target = '?v='
-                idx = url_data.find(target)
-                video_id = url_data[idx+len(target):]
-                #print(video_id)
-                video_url = "https://youtu.be/" + video_id
-                if "hours ago" in data:
-                    print(data)
-                    #print(title)
-                    target = 'by '
-                    idx = data.find(target)
-                    ch_name_data = data[idx+len(target):]
-                    target = "Streamed"
-                    idx = ch_name_data.find(target)
-                    ch_name = ch_name_data[:idx]
-                    print(ch_name)
+            iframe_rows_titel = r.html.find("#video-title")
+            #print(iframe_rows_titel)
+            #iframe_rows_metadata = r.html.find("#metadata-line")
+            for iframe_titel in iframe_rows_titel:
+                data = iframe_titel.attrs["aria-label"]
+                if "Streamed" in data:
+                    title = iframe_titel.attrs["title"]
+                    url_data = iframe_titel.attrs["href"]
+                    target = '?v='
+                    idx = url_data.find(target)
+                    video_id = url_data[idx+len(target):]
+                    #print(video_id)
+                    video_url = "https://youtu.be/" + video_id
+                    if "hours ago" in data:
+                        print(data)
+                        #print(title)
+                        target = 'by '
+                        idx = data.find(target)
+                        ch_name_data = data[idx+len(target):]
+                        target = "Streamed"
+                        idx = ch_name_data.find(target)
+                        ch_name = ch_name_data[:idx]
+                        print(ch_name)
 
-                    idx = data.find(target)
-                    time_data = data[idx+len(target):]
-                    target ="ago"
-                    idx = time_data.find(target)
-                    time_ = time_data[:idx]
-                    print(time_)
-                    idx = data.find(target)
-                    v_time_data = data[idx+len(target):]
-                    target ="minutes"
-                    idx = v_time_data.find(target)
-                    v_time = v_time_data[:idx+len(target)]
-                    print(v_time)
-                    target = v_time
-                    idx = data.find(target)
-                    viewCount = data[idx+len(v_time):]
-                    if len(viewCount) >= 20:
-                        target ="minute"
+                        idx = data.find(target)
+                        time_data = data[idx+len(target):]
+                        target ="ago"
+                        idx = time_data.find(target)
+                        time_ = time_data[:idx]
+                        print(time_)
+                        idx = data.find(target)
+                        v_time_data = data[idx+len(target):]
+                        target ="minutes"
                         idx = v_time_data.find(target)
                         v_time = v_time_data[:idx+len(target)]
                         print(v_time)
                         target = v_time
                         idx = data.find(target)
                         viewCount = data[idx+len(v_time):]
-                    print(viewCount)
-                    id_list.append([ch_name,title,time_,v_time,viewCount,video_url])
-            else:
-                pass
-                         #print(channelTitle+title+str(viewCount))
-    list_.extend(id_list)
+                        if len(viewCount) >= 20:
+                            target ="minute"
+                            idx = v_time_data.find(target)
+                            v_time = v_time_data[:idx+len(target)]
+                            print(v_time)
+                            target = v_time
+                            idx = data.find(target)
+                            viewCount = data[idx+len(v_time):]
+                        print(viewCount)
+                        id_list.append([ch_name,title,time_,v_time,viewCount,video_url])
+                else:
+                    pass
+                             #print(channelTitle+title+str(viewCount))
+        list_.extend(id_list)
+    except:
+        pass
 print("EXIT")
 #print(list_)
 videos = pd.DataFrame(list_, columns=['チャンネル名', '動画タイトル', '経過時間', '動画時間', '視聴回数', 'URL'])
@@ -357,4 +360,4 @@ videos.to_csv('videos2.csv', index=None)
 
 sh.values_clear(f"{sheet_name2}!A1:F300")
 wks2.update(list(csv.reader(open(csv_file_name2, encoding='UTF-8'))))
-#heroku run python main.py -a youtube-retasu
+
