@@ -286,7 +286,7 @@ infos = []
 list_ = []
 for CHANNEL_ID in CHANNEL_ID_LIST2:
     try:
-        time.sleep(3)
+        #time.sleep(3)
         url = 'https://www.youtube.com/channel/{}/videos'.format(CHANNEL_ID)
         r = session.get(url,headers=headers)
         #print(url)
